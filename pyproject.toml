@@ -1,17 +1,30 @@
 [tool.poetry]
-name = "pytranspleet"
+name = "server"
 version = "0.1.0"
 description = ""
 authors = ["Andrei Gheorghe <andrei.gheorghe@verified.eu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-demucs = "^4.0.1"
+python = ">=3.9,<3.10"
 pywebview = "^5.1"
+torch = "2.0.1"
+demucs = {git = "https://github.com/facebookresearch/demucs"}
+numpy = "1.26.4"
+basic-pitch = "^0.3.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4"
+pytest-sugar = "*"
+pytest-cov = "*"
+black = "*"
+mypy = "*"
+ruff = "*"
+isort = "*"
+tox = "^4.11.4"
 
 [tool.poetry.scripts]
-app = "pytranspleet.__main__:main"
+app = "server.__main__:main"
 
 [build-system]
 requires = ["poetry-core"]
