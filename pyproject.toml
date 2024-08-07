@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "pytranspleet"
+version = "0.1.0"
+description = ""
+authors = ["Andrei Gheorghe <andrei.gheorghe@verified.eu>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+demucs = "^4.0.1"
+pywebview = "^5.1"
+
+[tool.poetry.scripts]
+app = "pytranspleet.__main__:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
