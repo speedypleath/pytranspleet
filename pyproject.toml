@@ -10,8 +10,10 @@ python = ">=3.9,<3.10"
 pywebview = "^5.1"
 torch = "2.0.1"
 demucs = {git = "https://github.com/facebookresearch/demucs"}
-numpy = "1.26.4"
+numpy = "1.23.1"
 basic-pitch = "^0.3.3"
+protobuf = "3.20.0"
+tensorflow-macos = ">=2.4.1,<2.15.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4"
@@ -25,6 +27,9 @@ tox = "^4.11.4"
 
 [tool.poetry.scripts]
 app = "server.__main__:main"
+
+[tool.pyright]
+reportPrivateImportUsage = "none"
 
 [build-system]
 requires = ["poetry-core"]
