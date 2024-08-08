@@ -1,4 +1,4 @@
-import server.separator.api as demucs_api
+import backend.separator.api as demucs_api
 from pathlib import Path
 
 def test_separate_file():
