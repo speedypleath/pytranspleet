@@ -1,0 +1,35 @@
+{
+  "name": "pytranspleet",
+  "version": "1.0.0",
+  "description": "",
+  "source": "./public/index.html",
+  "scripts": {
+    "start": "concurrently \"npm run start:react\" \"poetry run app\"",
+    "start:react": "parcel watch .",
+    "start:python": "poetry run app",
+    "build:react": "parcel build --public-url .",
+    "build:python": "poetry build",
+    "serve:react": "parcel serve",
+    "test:python": "poetry run pytest tests",
+    "lint:python": "poetry run ruff check backend tests",
+    "lint:python:fix": "poetry run ruff check --fix backend tests",
+    "lint:react": "eslint .",
+    "tox": "poetry run tox"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@parcel/packager-raw-url": "^2.12.0",
+    "@parcel/transformer-webmanifest": "^2.12.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.8.0",
+    "eslint-plugin-react": "^7.35.0",
+    "parcel": "^2.12.0",
+    "process": "^0.11.10"
+  }
+}
