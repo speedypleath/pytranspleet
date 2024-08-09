@@ -4,7 +4,7 @@
   "description": "",
   "source": "./public/index.html",
   "scripts": {
-    "start": "concurrently \"npm run start:react\" \"poetry run app\"",
+    "start": "concurrently --kill-others -n REACT,APP -c bgGreen.bold,bgBlue.bold \"pnpm start:react\" \"pnpm start:python\"",
     "start:react": "parcel watch .",
     "start:python": "poetry run app",
     "build:react": "parcel build --public-url .",

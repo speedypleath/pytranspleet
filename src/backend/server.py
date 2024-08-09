@@ -13,8 +13,6 @@ if sys.flags.dev_mode:
 else:
     MAIN_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "dist")  # production
 
-print(MAIN_DIR)
-
 
 def wait_template():
     while not os.path.exists(os.path.join(MAIN_DIR, "index.html")) and sys.flags.dev_mode:
@@ -23,6 +21,13 @@ def wait_template():
 
 flask_server = Flask(__name__, template_folder=MAIN_DIR, static_folder=MAIN_DIR, static_url_path="/")
 flask_server.config["SEND_FILE_MAX_AGE_DEFAULT"] = 1
+
+def get_file_picker(window: webview.Window):
+    def open_file_picker():
+        file_types = ('Audio Files (*.wav;*.mp3;*.flac)', 'All files (*.*)')
+        result = window.create_file_dialog(webview.OPEN_DIALOG, allow_multiple=True, file_types=file_types)
+        return result
+    return open_file_picker
 
 
 def verify_token(function):
@@ -56,3 +61,14 @@ def serve(path):
 @verify_token
 def initialize():
     return jsonify({"user": getpass.getuser()})
+
+@flask_server.route('/open_file_dialog', methods=['GET']) 
+def open_file_dialog():
+    window = webview.active_window()
+    if window is None:
+        raise Exception("Window is not initialized")
+    
+    file = window.create_file_dialog(webview.OPEN_DIALOG, allow_multiple=False, file_types=('Audio Files (*.wav;*.mp3;*.flac)', 'All files (*.*)'))
+    if file:
+        return {'file': file}
+    return {'file': None}

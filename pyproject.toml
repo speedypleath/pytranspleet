@@ -30,7 +30,7 @@ isort = "*"
 tox = "^4.11.4"
 
 [tool.poetry.scripts]
-app = "src.__main__:main"
+app = "src.main:run"
 
 [tool.pyright]
 reportPrivateImportUsage = "none"
