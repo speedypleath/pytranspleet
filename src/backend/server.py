@@ -4,8 +4,9 @@ import time
 import json
 import getpass  # get user
 from functools import wraps
+from typing import List
 import webview
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_file
 
 # Template directory
 if sys.flags.dev_mode:
@@ -62,6 +63,10 @@ def serve(path):
 def initialize():
     return jsonify({"user": getpass.getuser()})
 
+
+files: List[str] = ["/Users/andrei/Projects/pytranspleet/tests/rollwiththepunches.wav"]
+
+
 @flask_server.route('/open_file_dialog', methods=['GET']) 
 def open_file_dialog():
     window = webview.active_window()
@@ -70,5 +75,17 @@ def open_file_dialog():
     
     file = window.create_file_dialog(webview.OPEN_DIALOG, allow_multiple=False, file_types=('Audio Files (*.wav;*.mp3;*.flac)', 'All files (*.*)'))
     if file:
+        files[0] = file[0]
         return {'file': file}
     return {'file': None}
+
+
+@flask_server.route('/audio.wav', methods=["GET"])
+def get_audio():
+    if not files:
+        return jsonify({"error": "No file selected"})
+
+    return send_file(
+        files[0], 
+        mimetype="audio/wav", 
+        as_attachment=True)

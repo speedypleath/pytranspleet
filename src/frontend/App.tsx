@@ -1,4 +1,5 @@
-import React, { useState, useEffect, ReactElement } from "react";
+import React, { useState, useEffect, ReactElement, useRef } from "react";
+import { useWavesurfer } from '@wavesurfer/react';
 import "./App.css";
 
 declare global {
@@ -10,6 +11,23 @@ declare global {
 const App = (): ReactElement => {
   const { token } = window.SERVER_DATA;
   const [data, setData] = useState<{user: string} | null>(null);
+  const containerRef = useRef(null)
+  
+  const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
+    container: containerRef,
+    url: `${window.location.origin}/audio.wav`,
+    waveColor: 'purple',
+    height: 100,
+    width: 500,
+  })
+
+  const onPlayPause = () => {
+    wavesurfer && wavesurfer.playPause()
+  }
+
+  const refreshPlayer = () => {
+    wavesurfer && wavesurfer.load(`${window.location.origin}/audio.wav`)
+  }
 
   useEffect(() => {
     fetch(`${window.location.origin}/init`, {
@@ -37,6 +55,7 @@ const App = (): ReactElement => {
       })
       .then((response) => {
         console.log(response);
+        refreshPlayer();
       });
   }
   
@@ -50,10 +69,17 @@ const App = (): ReactElement => {
               Hello, <code>{data?.user}</code>! <br />
             </span>
           ) : null}
-          Edit <code>src/frontend/App.js</code> save to pla.
+          Edit <code>src/frontend/App.js</code> save to pas.
         </p>
         <button onClick={() => openFilePicker()}>Pick file</button>
+        <div ref={containerRef} />
+
+  <button onClick={onPlayPause}>
+    {isPlaying ? 'Pause' : 'Play'}
+  </button>
       </header>
+      <body>
+      </body>
     </div>
   );
 };

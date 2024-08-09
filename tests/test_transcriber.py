@@ -1,4 +1,4 @@
-import backend.transcriber.api as transcriber_api
+import src.backend.transcriber.api as transcriber_api
 from pathlib import Path
 
 
