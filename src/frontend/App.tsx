@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
-import logo from "./logo.svg";
+import React, { useState, useEffect, ReactElement } from "react";
 import "./App.css";
 
-const App = () => {
+declare global {
+  interface Window {
+    SERVER_DATA: { token: string };
+  }
+}
+
+const App = (): ReactElement => {
   const { token } = window.SERVER_DATA;
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<{user: string} | null>(null);
 
   useEffect(() => {
     fetch(`${window.location.origin}/init`, {
@@ -21,7 +26,7 @@ const App = () => {
       });
   }, []);
 
-  openFilePicker = () => {
+  const openFilePicker = () => {
     fetch(`${window.location.origin}/open_file_dialog`, {
       method: "GET",
       headers: { "Content-type": "application/json" },
@@ -39,11 +44,10 @@ const App = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
           {data ? (
             <span>
-              Hello, <code>{data.user}</code>! <br />
+              Hello, <code>{data?.user}</code>! <br />
             </span>
           ) : null}
           Edit <code>src/frontend/App.js</code> save to pla.
