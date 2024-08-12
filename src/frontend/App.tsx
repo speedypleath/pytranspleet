@@ -1,8 +1,8 @@
 import React, { useState, useEffect, ReactElement, useRef } from "react";
 import { useWavesurfer } from '@wavesurfer/react';
-import ZoomPlugin from 'wavesurfer.js/dist/plugins/zoom.esm.js'
-import Hover from 'wavesurfer.js/dist/plugins/hover.esm.js'
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js'
+import ZoomPlugin from "wavesurfer.js/dist/plugins/zoom.js";
+import Hover from 'wavesurfer.js/dist/plugins/hover.esm.js'
 import "./App.css";
 
 declare global {
@@ -14,6 +14,9 @@ declare global {
 const App = (): ReactElement => {
   const { token } = window.SERVER_DATA;
   const [data, setData] = useState<{user: string} | null>(null);
+  const [startTime, setStartTime] = useState<number>(0);
+  const [endTime, setEndTime] = useState<number>(0);
+  const [regions, setRegions] = useState<RegionsPlugin | null>(null);
   const containerRef = useRef(null)
   
   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
@@ -22,6 +25,7 @@ const App = (): ReactElement => {
     waveColor: 'purple',
     height: 100,
     width: 500,
+    dragToSeek: true,
   })
 
   const onPlayPause = () => {
@@ -31,6 +35,28 @@ const App = (): ReactElement => {
   const refreshPlayer = () => {
     wavesurfer && wavesurfer.load(`${window.location.origin}/audio.wav`)
   }
+
+  useEffect(() => {
+    if(wavesurfer) {
+      regions?.clearRegions();
+      regions?.addRegion({
+        start: startTime,
+        end: endTime,
+        color: 'hsla(400, 100%, 30%, 0.1)',
+        drag: true,
+        resize: true,
+      });
+    }
+  }, [endTime]);
+
+  const onStartDrag = (start: number) => {
+    setStartTime(start);
+  };
+
+  const onEndDrag = (end: number) => {
+    setEndTime(end);
+  }
+    
 
   useEffect(() => {
     fetch(`${window.location.origin}/init`, {
@@ -69,20 +95,21 @@ const App = (): ReactElement => {
       })
     );
     
-    const regions = RegionsPlugin.create();
+    const regions = RegionsPlugin.create()
+    
+    regions.enableDragSelection({color: 'rgba(255, 0, 0, 0.1)'});
+    setRegions(regions);
     wavesurfer?.registerPlugin(regions);
-
-    wavesurfer?.on('decode', () => {
-      regions.addRegion({
-        start: 0,
-        end: 8,
-        content: 'Resize me',
-        color: 'hsla(400, 100%, 30%, 0.1)',
-        drag: false,
-        resize: true,
-      })
+    
+    wavesurfer?.on('drag', (e) => onEndDrag(e * wavesurfer.getDuration()));
+    wavesurfer?.on('dragstart', (start) => onStartDrag(start * wavesurfer.getDuration()));
+    wavesurfer?.on('dragend', (end) => onEndDrag(end * wavesurfer.getDuration()));
+    wavesurfer?.on('click', (e) => {
+      console.log(e);
     });
-
+    return () => { 
+      wavesurfer?.unAll();
+    };
   }, [isReady]);
 
   const openFilePicker = () => {
@@ -107,7 +134,7 @@ const App = (): ReactElement => {
         <p>
           {data ? (
             <span>
-              Hello, <code>{data?.user}</code>! <br />
+              Hell, <code>{data?.user}</code>! <br />
             </span>
           ) : null}
           Edit <code>src/frontend/App.js</code> save to pas.
