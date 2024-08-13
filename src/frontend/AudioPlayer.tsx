@@ -41,6 +41,7 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
     useEffect(() => {
       if(wavesurfer) {
         regions?.clearRegions();
+        if(startTime > endTime) return;
         regions?.addRegion({
           start: startTime,
           end: endTime,
