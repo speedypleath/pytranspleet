@@ -1,10 +1,13 @@
 import os
+from re import sub
 import sys
 import time
 import json
 import getpass  # get user
 from functools import wraps
-from typing import List
+from tkinter import NO
+from typing import List, cast
+from markupsafe import escape
 import webview
 from flask import Flask, render_template, jsonify, request, send_file
 
@@ -63,29 +66,40 @@ def serve(path):
 def initialize():
     return jsonify({"user": getpass.getuser()})
 
+files = { 'audio.wav': "/Users/andrei/Projects/pytranspleet/tests/rollwiththepunches.wav"}
 
-files: List[str] = ["/Users/andrei/Projects/pytranspleet/tests/rollwiththepunches.wav"]
 
-
-@flask_server.route('/open_file_dialog', methods=['GET']) 
+@flask_server.route('/open_file_dialog', methods=['GET'])  # type: ignore
 def open_file_dialog():
     window = webview.active_window()
     if window is None:
         raise Exception("Window is not initialized")
     
-    file = window.create_file_dialog(webview.OPEN_DIALOG, allow_multiple=False, file_types=('Audio Files (*.wav;*.mp3;*.flac)', 'All files (*.*)'))
+    file = cast(str,window.create_file_dialog(webview.OPEN_DIALOG, allow_multiple=False, file_types=('Audio Files (*.wav;*.mp3;*.flac)', 'All files (*.*)')))[0]
     if file:
-        files[0] = file[0]
-        return {'file': file}
-    return {'file': None}
+        print(file)
+        print(file.split('/')[-1])
+        print(file)
+        files[file.split('/')[-1]] = file
+        return { 'file': file.split('/')[-1] }
+    return { file: None }
 
 
-@flask_server.route('/audio.wav', methods=["GET"])
-def get_audio():
-    if not files:
-        return jsonify({"error": "No file selected"})
-
+@flask_server.route('/audio/<path:subpath>')
+def route_audio_file(subpath):
+    if subpath not in files:
+        return jsonify({"error": "Audio file doesn't exit"})
     return send_file(
-        files[0], 
+        files[subpath], 
         mimetype="audio/wav", 
         as_attachment=True)
+    
+# @flask_server.route('/audio.wav', methods=["GET"])
+# def get_audio():
+#     if not files:
+#         return jsonify({"error": "No file selected"})
+
+#     return send_file(
+#         files[0], 
+#         mimetype="audio/wav", 
+#         as_attachment=True)
