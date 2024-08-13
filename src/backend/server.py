@@ -10,6 +10,9 @@ from typing import List, cast
 from markupsafe import escape
 import webview
 from flask import Flask, render_template, jsonify, request, send_file
+from backend.utils.filesystem import cut_audio_segment
+from pathlib import Path
+
 
 # Template directory
 if sys.flags.dev_mode:
@@ -85,7 +88,7 @@ def open_file_dialog():
     return { file: None }
 
 
-@flask_server.route('/audio/<path:subpath>')
+@flask_server.route('/audio/<path:subpath>', methods=['GET'])
 def route_audio_file(subpath):
     if subpath not in files:
         return jsonify({"error": "Audio file doesn't exit"})
@@ -94,12 +97,19 @@ def route_audio_file(subpath):
         mimetype="audio/wav", 
         as_attachment=True)
     
-# @flask_server.route('/audio.wav', methods=["GET"])
-# def get_audio():
-#     if not files:
-#         return jsonify({"error": "No file selected"})
 
-#     return send_file(
-#         files[0], 
-#         mimetype="audio/wav", 
-#         as_attachment=True)
+@flask_server.route('cut_segment/<path:file>', methods=['POST'])
+def cut_segment(file):
+    if file not in files:
+        return jsonify({"error": "Audio file doesn't exit"})
+    
+    path = files[file]
+    left = request.form.get('start_time')
+    right = request.form.get('end_time')
+    
+    if not left or not right:
+        return jsonify({"error": "Wrong data"})
+    
+    new_file = cut_audio_segment(Path(path), left, right)
+    
+    return {}

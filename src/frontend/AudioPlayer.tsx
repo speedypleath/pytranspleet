@@ -11,6 +11,7 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
     const [startTime, setStartTime] = useState<number>(0);
     const [endTime, setEndTime] = useState<number>(0);
     const [regions, setRegions] = useState<RegionsPlugin | null>(null);
+    const [loadedFile, setLoadedFile] = useState<string>('')
     const containerRef = useRef(null)
     
     const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
@@ -26,16 +27,20 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
       wavesurfer && wavesurfer.playPause()
     }
   
-    const refreshPlayer = (file) => {
-      wavesurfer && wavesurfer.load(`${window.location.origin}/audio/${file}`)
+    const refreshPlayer = () => {
+      wavesurfer && wavesurfer.load(`${window.location.origin}/audio/${loadedFile}`)
     }
   
     const cropSegment = () => {
-      if (!wavesurfer || !regions)
-        return
-  
-      const decoded = 
-      console.log(wavesurfer.getDecodedData())
+      fetch(`${window.location.origin}/cut_segment`, {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({
+          start_time: startTime,
+          end_time: endTime,
+          file: loadedFile
+        })
+      })
     }
     
     useEffect(() => {
@@ -109,8 +114,8 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
         })
         .then((response) => {
           console.log(response);
-          addFile(response.file)
-          refreshPlayer(response.file);
+          setLoadedFile(response.file)
+          refreshPlayer();
         });
     }
     

@@ -15,7 +15,7 @@ declare global {
 }
 
 const App = (): ReactElement => {
-  const [files, setFiles] = useState<string[]>(['baga tek in pula mea'])
+  const [files, setFiles] = useState<string[]>([])
 
   return (
       <Grid className="App-body" container padding={0} margin={0} bgcolor="#282c34">
