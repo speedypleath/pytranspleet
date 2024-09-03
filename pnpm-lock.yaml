@@ -32,6 +32,9 @@ importers:
       wavesurfer.js:
         specifier: ^7.8.2
         version: 7.8.2
+      zustand:
+        specifier: ^4.5.5
+        version: 4.5.5(@types/react@18.3.3)(react@18.3.1)
     devDependencies:
       '@parcel/packager-raw-url':
         specifier: ^2.12.0
@@ -1979,6 +1982,11 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
+  use-sync-external-store@1.2.2:
+    resolution: {integrity: sha512-PElTlVMwpblvbNqQ82d2n6RjStvdSoNe9FG28kNfz3WiXilJm4DdNkEzRhCZuIDwY8U08WVihhGR5iRqAwfDiw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
   utility-types@3.11.0:
     resolution: {integrity: sha512-6Z7Ma2aVEWisaL6TvBCy7P8rm2LQoPv6dJ7ecIaIixHcwfbJ0x7mWdbcwlIM5IGQxPZSFYeqRCqlOOeKoJYMkw==}
     engines: {node: '>= 4'}
@@ -2036,6 +2044,21 @@ packages:
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  zustand@4.5.5:
+    resolution: {integrity: sha512-+0PALYNJNgK6hldkgDq2vLrw5f6g/jCInz52n9RTpropGgeAf/ioFUCdtsjCqu4gNhW9D01rUQBROoRjdzyn2Q==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      immer: '>=9.0.6'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
 
 snapshots:
 
@@ -2384,13 +2407,15 @@ snapshots:
     transitivePeerDependencies:
       - '@parcel/core'
 
-  '@parcel/cache@2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))':
+  '@parcel/cache@2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)':
     dependencies:
       '@parcel/core': 2.12.0(@swc/helpers@0.5.12)
       '@parcel/fs': 2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)
       '@parcel/logger': 2.12.0
       '@parcel/utils': 2.12.0
       lmdb: 2.8.5
+    transitivePeerDependencies:
+      - '@swc/helpers'
 
   '@parcel/codeframe@2.12.0':
     dependencies:
@@ -2450,7 +2475,7 @@ snapshots:
   '@parcel/core@2.12.0(@swc/helpers@0.5.12)':
     dependencies:
       '@mischnic/json-sourcemap': 0.1.1
-      '@parcel/cache': 2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))
+      '@parcel/cache': 2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)
       '@parcel/diagnostic': 2.12.0
       '@parcel/events': 2.12.0
       '@parcel/fs': 2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)
@@ -2881,7 +2906,7 @@ snapshots:
 
   '@parcel/types@2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)':
     dependencies:
-      '@parcel/cache': 2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))
+      '@parcel/cache': 2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)
       '@parcel/diagnostic': 2.12.0
       '@parcel/fs': 2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)
       '@parcel/package-manager': 2.12.0(@parcel/core@2.12.0(@swc/helpers@0.5.12))(@swc/helpers@0.5.12)
@@ -4391,6 +4416,10 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
+  use-sync-external-store@1.2.2(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
   utility-types@3.11.0: {}
 
   wavesurfer.js@7.8.2: {}
@@ -4464,3 +4493,10 @@ snapshots:
       yargs-parser: 21.1.1
 
   yocto-queue@0.1.0: {}
+
+  zustand@4.5.5(@types/react@18.3.3)(react@18.3.1):
+    dependencies:
+      use-sync-external-store: 1.2.2(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.3.3
+      react: 18.3.1

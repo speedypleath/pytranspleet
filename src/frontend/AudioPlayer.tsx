@@ -4,6 +4,8 @@ import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.esm.js'
 import ZoomPlugin from "wavesurfer.js/dist/plugins/zoom.js";
 import Hover from 'wavesurfer.js/dist/plugins/hover.esm.js'
 import { Button, Grid } from "@mui/material";
+import useWaveSurferStore from "./hooks/useWavesurferStore";
+import { useShallow } from "zustand/react/shallow";
 
 
 
@@ -11,8 +13,8 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
     const [startTime, setStartTime] = useState<number>(0);
     const [endTime, setEndTime] = useState<number>(0);
     const [regions, setRegions] = useState<RegionsPlugin | null>(null);
-    const [loadedFile, setLoadedFile] = useState<string>('')
     const containerRef = useRef(null)
+    const { init, loadedFile, setLoadedFile } = useWaveSurferStore(useShallow(state => state));
     
     const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
       container: containerRef,
@@ -21,7 +23,14 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
       height: 100,
       width: 500,
       dragToSeek: true,
-    })
+    });
+
+    useEffect(() => {
+      if(wavesurfer) {
+        init(wavesurfer);
+      }
+    }, [wavesurfer]);
+
   
     const onPlayPause = () => {
       wavesurfer && wavesurfer.playPause()
@@ -41,21 +50,7 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
           console.log(data);
           addFile(data.file);
           console.log(wavesurfer);
-          wavesurfer?.empty();
-          wavesurfer?.load(`${window.location.origin}/audio/${data.file}`).then(() => {
-            console.log('loaded');
-            setLoadedFile(data.file);
-            setEndTime(0);
-            setStartTime(0);
-          }
-          ).catch(
-            (error) => {
-              console.log('error');
-              console.log(error);
-            }
-          ).finally(() => {
-            console.log('finally');
-          });
+          setLoadedFile(`${window.location.origin}/audio/${data.file}`);
         });
       });
     }
@@ -129,12 +124,10 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
           if (response.ok) return response.json();
           throw response;
         })
-        .then((response) => {
-          console.log(response);
-          wavesurfer?.load(`${window.location.origin}/audio/${response.file}`).then(() => {
-            console.log('loaded');
-            setLoadedFile(response.file);
-          });
+        .then((data) => {
+          console.log(data.file);
+          addFile(data.file);
+          setLoadedFile(`${window.location.origin}/audio/${data.file}`);
         });
     }
     
