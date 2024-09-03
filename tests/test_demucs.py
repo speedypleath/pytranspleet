@@ -1,7 +1,7 @@
 from time import sleep
 import src.backend.separator.api as demucs_api
 import src.backend.utils.filesystem as fs
-import src.backend.utils.audio as player
+import src.backend.audio as player
 from demucs.audio import prevent_clip
 from pathlib import Path
 

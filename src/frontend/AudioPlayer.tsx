@@ -27,12 +27,8 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
       wavesurfer && wavesurfer.playPause()
     }
   
-    const refreshPlayer = () => {
-      wavesurfer && wavesurfer.load(`${window.location.origin}/audio/${loadedFile}`)
-    }
-  
     const cropSegment = () => {
-      fetch(`${window.location.origin}/cut_segment`, {
+      fetch(`${window.location.origin}/cut_segment/${loadedFile}`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({
@@ -40,7 +36,28 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
           end_time: endTime,
           file: loadedFile
         })
-      })
+      }).then((response) => {
+        response.json().then((data) => {
+          console.log(data);
+          addFile(data.file);
+          console.log(wavesurfer);
+          wavesurfer?.empty();
+          wavesurfer?.load(`${window.location.origin}/audio/${data.file}`).then(() => {
+            console.log('loaded');
+            setLoadedFile(data.file);
+            setEndTime(0);
+            setStartTime(0);
+          }
+          ).catch(
+            (error) => {
+              console.log('error');
+              console.log(error);
+            }
+          ).finally(() => {
+            console.log('finally');
+          });
+        });
+      });
     }
     
     useEffect(() => {
@@ -114,8 +131,10 @@ export const AudioPlayer = ({ addFile }: { addFile: (file: string) => void}): Re
         })
         .then((response) => {
           console.log(response);
-          setLoadedFile(response.file)
-          refreshPlayer();
+          wavesurfer?.load(`${window.location.origin}/audio/${response.file}`).then(() => {
+            console.log('loaded');
+            setLoadedFile(response.file);
+          });
         });
     }
     

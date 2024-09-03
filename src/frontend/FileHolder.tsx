@@ -42,7 +42,7 @@ export const FileHolder = ({ files }: { files: string[]}): React.ReactElement =>
         <Grid container height='100vh' width='30vw' left={0} sx={style} xs={4}>
             <List>
             { files.map((file: string) => {
-                return <ListItem>
+                return <ListItem key={file}>
                     <ListItemText primary={file} />
                 </ListItem>
             })  }

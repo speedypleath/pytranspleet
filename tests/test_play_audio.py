@@ -1,5 +1,5 @@
 import src.backend.utils.filesystem as fs
-import src.backend.utils.audio as player
+import src.backend.audio as player
 from pathlib import Path
 
 

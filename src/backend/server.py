@@ -90,6 +90,8 @@ def open_file_dialog():
 
 @flask_server.route('/audio/<path:subpath>', methods=['GET'])
 def route_audio_file(subpath):
+    print(subpath)
+    print(files.keys())
     if subpath not in files:
         return jsonify({"error": "Audio file doesn't exit"})
     return send_file(
@@ -98,18 +100,18 @@ def route_audio_file(subpath):
         as_attachment=True)
     
 
-@flask_server.route('cut_segment/<path:file>', methods=['POST'])
+@flask_server.route('/cut_segment/<path:file>', methods=['POST'])
 def cut_segment(file):
     if file not in files:
         return jsonify({"error": "Audio file doesn't exit"})
-    
     path = files[file]
-    left = request.form.get('start_time')
-    right = request.form.get('end_time')
+    left = request.json.get('start_time')
+    right = request.json.get('end_time')
     
     if not left or not right:
         return jsonify({"error": "Wrong data"})
     
     new_file = cut_audio_segment(Path(path), left, right)
-    
-    return {}
+    files[new_file.split('/')[-1]] = new_file
+    print(new_file)
+    return { 'file': new_file.split('/')[-1] }
